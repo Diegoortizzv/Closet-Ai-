@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f5f0">
+<title>Closet AI — Your Personal Wardrobe</title>
+
+<style>
+:root {
+  --bg: #f7f5f0;
+  --card: #ffffff;
+  --ink: #25251f;
+  --muted: #77776e;
+  --line: #e6e3dc;
+  --accent: #64745b;
+  --soft: #e9ede5;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button, input, select { font: inherit; }
+
+button { cursor: pointer; }
+
+header {
+  padding: 24px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.logo {
+  font-family: Georgia, serif;
+  font-size: 27px;
+  letter-spacing: -1px;
+}
+
+.logo span { color: var(--accent); }
+
+.badge {
+  font-size: 11px;
+  letter-spacing: 1px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  padding: 9px 13px;
+  color: var(--muted);
+}
+
+main {
+  max-width: 1200px;
+  margin: auto;
+  padding: 36px 5% 70px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+h1 {
+  font-family: Georgia, serif;
+  font-size: clamp(36px, 6vw, 60px);
+  font-weight: 400;
+  letter-spacing: -2px;
+  margin: 12px 0;
+}
+
+.subtitle {
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 560px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 30px 0;
+}
+
+.stat {
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.stat strong {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 30px;
+  font-weight: 400;
+}
+
+.stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 25px;
+}
+
+.tab {
+  background: transparent;
+  border: 0;
+  padding: 14px 17px;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+}
+
+.tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-family: Georgia, serif;
+  font-size: 29px;
+  font-weight: 400;
+  margin: 0 0 7px;
+}
+
+.small-text {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.btn {
+  border: 1px solid var(--ink);
+  border-radius: 7px;
+  padding: 12px 17px;
+  background: var(--ink);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btn:hover { opacity: .85; }
+
+.btn.secondary {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.btn.green {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 22px 0;
+}
+
+input, select {
+  background: white;
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 7px;
+  color: var(--ink);
+  min-width: 0;
+}
+
+.filters input { flex: 1; min-width: 150px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 17px;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.photo {
+  aspect-ratio: 4 / 5;
+  background: #eeece6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color: #9a998e;
+  font-size: 38px;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-info { padding: 13px; }
+
+.card-info h3 {
+  font-size: 14px;
+  margin: 0 0 7px;
+  overflow-wrap: anywhere;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 5px 8px;
+  background: var(--soft);
+  color: #4b5c43;
+  border-radius: 30px;
+  margin: 3px 2px 3px 0;
+}
+
+.text-btn {
+  border: 0;
+  background: transparent;
+  color: #8b5147;
+  font-size: 12px;
+  padding: 8px 0 0;
+}
+
+.empty {
+  border: 1px dashed #d3d0c6;
+  border-radius: 12px;
+  text-align: center;
+  padding: 45px 20px;
+  color: var(--muted);
+  grid-column: 1 / -1;
+}
+
+.empty .symbol {
+  font-size: 35px;
+  margin-bottom: 10px;
+}
+
+.form-box {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 25px;
+  max-width: 650px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+  margin: 20px 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.field input, .field select { width: 100%; }
+
+.field.full { grid-column: 1 / -1; }
+
+#preview {
+  display: none;
+  width: 120px;
+  height: 145px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.outfit-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 22px 0;
+}
+
+.outfit {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.outfit-title { padding: 17px 17px 0; }
+
+.outfit-title h3 {
+  margin: 0 0 5px;
+  font-family: Georgia, serif;
+  font-size: 21px;
+  font-weight: 400;
+}
+
+.outfit-pieces {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  padding: 14px;
+}
+
+.piece {
+  min-width: 0;
+  background: var(--bg);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.piece .photo { aspect-ratio: 4 / 4; }
+
+.piece p {
+  font-size: 12px;
+  padding: 0 9px;
+  overflow-wrap: anywhere;
+}
+
+.outfit-footer {
+  display: flex;
+  gap: 12px;
+  padding: 0 17px 17px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+footer {
+  border-top: 1px solid var(--line);
+  text-align: center;
+  padding: 25px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 800px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+  header { padding: 19px 5%; }
+  main { padding: 27px 5% 50px; }
+  .logo { font-size: 23px; }
+  .badge { font-size: 9px; }
+  .stats { gap: 7px; }
+  .stat { padding: 13px 9px; }
+  .stat strong { font-size: 25px; }
+  .stat span { font-size: 10px; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .form-grid { grid-template-columns: 1fr; }
+  .field.full { grid-column: auto; }
+  .tab { padding: 12px 10px; font-size: 12px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">closet<span>ai.</span></div>
+  <div class="badge">YOUR PERSONAL STYLIST</div>
+</header>
+
+<main>
+  <div class="eyebrow">A wardrobe, reimagined</div>
+  <h1>Wear what you<br>already own.</h1>
+  <p class="subtitle">
+    Your personal wardrobe and outfit planner.
+    Discover new combinations, find your style, and make
+    the most of every piece you own.
+  </p>
+
+  <div class="stats">
+    <div class="stat">
+      <strong id="totalCount">0</strong>
+      <span>WARDROBE PIECES</span>
+    </div>
+    <div class="stat">
+      <strong id="outfitCount">0</strong>
+      <span>OUTFITS GENERATED</span>
+    </div>
+    <div class="stat">
+      <strong id="favoriteCount">0</strong>
+      <span>FAVOURITE LOOKS</span>
+    </div>
+  </div>
+
+  <nav class="tabs" aria-label="Main navigation">
+    <button class="tab active" data-tab="closet">My Closet</button>
+    <button class="tab" data-tab="add">+ Add Item</button>
+    <button class="tab" data-tab="inspire">Outfit Studio</button>
+    <button class="tab" data-tab="favorites">Favourites</button>
+  </nav>
+
+  <section id="closet" class="panel active">
+    <div class="section-head">
+      <div>
+        <h2>Your wardrobe</h2>
+        <div class="small-text">Every great outfit starts here.</div>
+      </div>
+      <button class="btn" data-go="add">+ Add clothing</button>
+    </div>
+
+    <div class="filters">
+      <input id="search" placeholder="Search your wardrobe..." aria-label="Search wardrobe">
+      <select id="categoryFilter" aria-label="Filter by category">
+        <option value="">All categories</option>
+        <option>Tops</option>
+        <option>Bottoms</option>
+        <option>Shoes</option>
+        <option>Outerwear</option>
+        <option>Accessories</option>
+      </select>
+      <select id="colorFilter" aria-label="Filter by colour">
+        <option value="">All colours</option>
+        <option>Black</option><option>White</option>
+        <option>Grey</option><option>Blue</option>
+        <option>Navy</option><option>Beige</option>
+        <option>Brown</option><option>Green</option>
+        <option>Red</option><option>Other</option>
+      </select>
+    </div>
+
+    <div id="closetGrid" class="grid"></div>
+  </section>
+
+  <section id="add" class="panel">
+    <div class="section-head">
+      <div>
+        <h2>Add a piece</h2>
+        <div class="small-text">Build your digital wardrobe, one item at a time.</div>
+      </div>
+    </div>
+
+    <form id="itemForm" class="form-box">
+      <div class="field">
+        <label for="itemPhoto">Clothing photo</label>
+        <input id="itemPhoto" type="file" accept="image/*">
+        <img id="preview" alt="Clothing photo preview">
+        <div class="small-text">A clear photo works best. Photos are saved in this browser.</div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="itemName">Item name *</label>
+          <input id="itemName" required maxlength="70" placeholder="e.g. White Oxford shirt">
+        </div>
+
+        <div class="field">
+          <label for="itemCategory">Category *</label>
+          <select id="itemCategory" required>
+            <option value="Tops">Tops</option>
+            <option value="Bottoms">Bottoms</option>
+            <option value="Shoes">Shoes</option>
+            <option value="Outerwear">Outerwear</option>
+            <option value="Accessories">Accessories</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="itemColor">Colour</label>
+          <select id="itemColor">
+            <option>Black</option><option>White</option>
+            <option>Grey</option><option>Blue</option>
+            <option>Navy</option><option>Beige</option>
+            <option>Brown</option><option>Green</option>
+            <option>Red</option><option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="itemStyle">Style</label>
+          <select id="itemStyle">
+            <option>Casual</option>
+            <option>Smart Casual</option>
+            <option>Formal</option>
+            <option>Streetwear</option>
+            <option>Sporty</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="itemSeason">Season</label>
+          <select id="itemSeason">
+            <option>All seasons</option>
+            <option>Spring</option>
+            <option>Summer</option>
+            <option>Fall</option>
+            <option>Winter</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="itemBrand">Brand (optional)</label>
+          <input id="itemBrand" maxlength="50" placeholder="e.g. Nike">
+        </div>
+      </div>
+
+      <button class="btn green" type="submit">Save to my closet</button>
+    </form>
+  </section>
+
+  <section id="inspire" class="panel">
+    <div class="eyebrow">Your wardrobe, new possibilities</div>
+    <h2 style="margin-top:10px">Outfit studio</h2>
+    <p class="small-text">
+      Create outfit combinations from the clothes you have saved.
+      Add tops, bottoms and shoes for the best results.
+    </p>
+
+    <div class="outfit-controls">
+      <select id="occasion" aria-label="Choose occasion">
+        <option value="Everyday">Everyday</option>
+        <option value="Date night">Date night</option>
+        <option value="Going out">Going out</option>
+        <option value="Work">Work</option>
+        <option value="Smart casual">Smart casual</option>
+        <option value="Weekend">Weekend</option>
+      </select>
+      <button class="btn green" id="generateBtn">Generate outfits ✨</button>
+    </div>
+
+    <div id="outfitResults" class="grid">
+      <div class="empty">
+        <div class="symbol">✳</div>
+        <p>Your next favourite outfit is waiting.</p>
+        <p class="small-text">Add clothing to your closet, then generate your first looks.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="favorites" class="panel">
+    <div class="section-head">
+      <div>
+        <h2>Favourite looks</h2>
+        <div class="small-text">Your personal collection of outfits.</div>
+      </div>
+    </div>
+    <div id="favoriteGrid" class="grid"></div>
+  </section>
+</main>
+
+<footer>CLOSET AI · STYLE MORE WITH WHAT YOU OWN</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const DB_KEY = "closetAI_items_v1";
+const FAV_KEY = "closetAI_favorites_v1";
+
+let items = [];
+let favorites = [];
+let generatedCount = 0;
+let currentPhoto = "";
+let generatedOutfits = [];
+
+try {
+  items = JSON.parse(localStorage.getItem(DB_KEY) || "[]");
+  favorites = JSON.parse(localStorage.getItem(FAV_KEY) || "[]");
+  if (!Array.isArray(items)) items = [];
+  if (!Array.isArray(favorites)) favorites = [];
+} catch (error) {
+  items = [];
+  favorites = [];
+}
+
+function persist() {
+  try {
+    localStorage.setItem(DB_KEY, JSON.stringify(items));
+    localStorage.setItem(FAV_KEY, JSON.stringify(favorites));
+    return true;
+  } catch (error) {
+    alert("Your browser storage is full. Try a smaller photo or export/backup your wardrobe before adding more items.");
+    return false;
+  }
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function photoHTML(item) {
+  if (item.photo) {
+    return `<div class="photo"><img src="${item.photo}" alt="${escapeHTML(item.name)}"></div>`;
+  }
+  return `<div class="photo" aria-label="No photo">✳</div>`;
+}
+
+function showTab(name) {
+  document.querySelectorAll(".panel").forEach(panel => {
+    panel.classList.toggle("active", panel.id === name);
+  });
+
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.classList.toggle("active", tab.dataset.tab === name);
+  });
+
+  if (name === "closet") renderCloset();
+  if (name === "favorites") renderFavorites();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.querySelectorAll(".tab").forEach(button => {
+  button.addEventListener("click", () => showTab(button.dataset.tab));
+});
+
+document.querySelectorAll("[data-go]").forEach(button => {
+  button.addEventListener("click", () => showTab(button.dataset.go));
+});
+
+function updateStats() {
+  $("totalCount").textContent = items.length;
+  $("favoriteCount").textContent = favorites.length;
+  $("outfitCount").textContent = generatedCount;
+}
+
+function renderCloset() {
+  const query = $("search").value.trim().toLowerCase();
+  const category = $("categoryFilter").value;
+  const color = $("colorFilter").value;
+
+  const filtered = items.filter(item =>
+    (item.name + " " + (item.brand || "")).toLowerCase().includes(query) &&
+    (!category || item.category === category) &&
+    (!color || item.color === color)
+  );
+
+  $("closetGrid").innerHTML = filtered.length
+    ? filtered.map(item => `
+      <article class="card">
+        ${photoHTML(item)}
+        <div class="card-info">
+          <h3>${escapeHTML(item.name)}</h3>
+          <span class="tag">${escapeHTML(item.category)}</span>
+          <span class="tag">${escapeHTML(item.color)}</span>
+          <div class="small-text">${escapeHTML(item.brand || item.style)}</div>
+          <button class="text-btn" data-delete="${escapeHTML(item.id)}">Remove item</button>
+        </div>
+      </article>
+    `).join("")
+    : `<div class="empty">
+        <div class="symbol">✳</div>
+        <p>${items.length ? "No items match your filters." : "Your closet is ready for its first piece."}</p>
+        <button class="btn" data-go="add">Add your first item</button>
+      </div>`;
+
+  updateStats();
+}
+
+$("closetGrid").addEventListener("click", event => {
+  const button = event.target.closest("[data-delete]");
+  if (!button) return;
+
+  const item = items.find(entry => entry.id === button.dataset.delete);
+  if (!item) return;
+
+  if (!confirm(`Remove "${item.name}" from your closet?`)) return;
+
+  items = items.filter(entry => entry.id !== item.id);
+  favorites = favorites.filter(fav => !fav.ids.includes(item.id));
+
+  if (persist()) {
+    renderCloset();
+    renderFavorites();
+  }
+});
+
+$("search").addEventListener("input", renderCloset);
+$("categoryFilter").addEventListener("change", renderCloset);
+$("colorFilter").addEventListener("change", renderCloset);
+
+$("itemPhoto").addEventListener("change", event => {
+  const file = event.target.files[0];
+  currentPhoto = "";
+  $("preview").style.display = "none";
+
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    alert("Please select an image file.");
+    event.target.value = "";
+    return;
+  }
+
+  if (file.size > 1.5 * 1024 * 1024) {
+    alert("Please choose a photo smaller than 1.5 MB to help keep your browser storage manageable.");
+    event.target.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    currentPhoto = reader.result;
+    $("preview").src = currentPhoto;
+    $("preview").style.display = "block";
+  };
+
+  reader.onerror = () => alert("Couldn't read that photo. Please try another.");
+  reader.readAsDataURL(file);
+});
+
+$("itemForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const item = {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+    name: $("itemName").value.trim(),
+    category: $("itemCategory").value,
+    color: $("itemColor").value,
+    style: $("itemStyle").value,
+    season: $("itemSeason").value,
+    brand: $("itemBrand").value.trim(),
+    photo: currentPhoto
+  };
+
+  if (!item.name) return;
+
+  items.unshift(item);
+
+  if (!persist()) {
+    items.shift();
+    return;
+  }
+
+  $("itemForm").reset();
+  currentPhoto = "";
+  $("preview").style.display = "none";
+
+  renderCloset();
+  showTab("closet");
+});
+
+function scoreOutfit(top, bottom, shoes, occasion) {
+  let score = Math.random() * 2;
+
+  const neutrals = ["Black", "White", "Grey", "Navy", "Beige", "Brown"];
+  const compatible = [
+    ["Black", "White"], ["Navy", "Beige"], ["Blue", "White"],
+    ["Green", "Beige"], ["Brown", "White"], ["Grey", "Black"],
+    ["Navy", "White"], ["Black", "Beige"], ["Green", "White"]
+  ];
+
+  if (neutrals.includes(top.color)) score += 3;
+  if (neutrals.includes(bottom.color)) score += 3;
+  if (neutrals.includes(shoes.color)) score += 2;
+
+  if (top.color === bottom.color) score -= 1;
+
+  if (compatible.some(pair =>
+    pair.includes(top.color) && pair.includes(bottom.color)
+  )) score += 4;
+
+  if (compatible.some(pair =>
+    pair.includes(bottom.color) && pair.includes(shoes.color)
+  )) score += 2;
+
+  if (occasion === "Work" || occasion === "Smart casual") {
+    if (["Formal", "Smart Casual"].includes(top.style)) score += 4;
+    if (["Formal", "Smart Casual"].includes(bottom.style)) score += 4;
+    if (shoes.style === "Formal" || shoes.style === "Smart Casual") score += 3;
+  }
+
+  if (occasion === "Going out" || occasion === "Date night") {
+    if (["Smart Casual", "Streetwear"].includes(top.style)) score += 2;
+  }
+
+  return score;
+}
+
+function makeOutfitCard(outfit, index, isFavoriteView = false) {
+  const pieces = [outfit.top, outfit.bottom, outfit.shoes];
+
+  if (outfit.outerwear) pieces.push(outfit.outerwear);
+
+  return `
+    <article class="outfit">
+      <div class="outfit-title">
+        <h3>${isFavoriteView ? "Saved look" : "Look " + (index + 1)}</h3>
+        <div class="small-text">${escapeHTML(outfit.occasion)}</div>
+      </div>
+      <div class="outfit-pieces">
+        ${pieces.map(item => `
+          <div class="piece">
+            ${photoHTML(item)}
+            <p><strong>${escapeHTML(item.name)}</strong><br>
+            <span class="small-text">${escapeHTML(item.category)} · ${escapeHTML(item.color)}</span></p>
+          </div>
+        `).join("")}
+      </div>
+      <div class="outfit-footer">
+        ${isFavoriteView ? "" : `
+          <button class="btn green" data-save-outfit="${index}">♡ Save look</button>
+        `}
+        ${isFavoriteView ? `
+          <button class="btn secondary" data-remove-fav="${escapeHTML(outfit.favId)}">Remove</button>
+        ` : ""}
+      </div>
+    </article>
+  `;
+}
+
+function generateOutfits() {
+  const tops = items.filter(item => item.category === "Tops");
+  const bottoms = items.filter(item => item.category === "Bottoms");
+  const shoes = items.filter(item => item.category === "Shoes");
+  const outerwear = items.filter(item => item.category === "Outerwear");
+  const occasion = $("occasion").value;
+
+  if (!tops.length || !bottoms.length || !shoes.length) {
+    $("outfitResults").innerHTML = `
+      <div class="empty">
+        <div class="symbol">✳</div>
+        <p>You need at least one top, one bottom and one pair of shoes.</p>
+        <p class="small-text">Add these three categories to unlock outfit generation.</p>
+        <button class="btn" data-go="add">Add clothing</button>
+      </div>`;
+    return;
+  }
+
+  const combos = [];
+
+  for (const top of tops) {
+    for (const bottom of bottoms) {
+      for (const shoe of shoes) {
+        if (combos.length >= 3000) break;
+
+        const jacket = outerwear.length && Math.random() < 0.35
+          ? outerwear[Math.floor(Math.random() * outerwear.length)]
+          : null;
+
+        combos.push({
+          top, bottom, shoes: shoe,
+          outerwear: jacket,
+          occasion,
+          score: scoreOutfit(top, bottom, shoe, occasion)
+        });
+      }
+    }
+  }
+
+  combos.sort((a, b) => b.score - a.score);
+
+  const unique = [];
+  const used = new Set();
+
+  for (const outfit of combos) {
+    const key = [outfit.top.id, outfit.bottom.id, outfit.shoes.id,
+      outfit.outerwear?.id || ""].join("|");
+
+    if (used.has(key)) continue;
+
+    used.add(key);
+    unique.push(outfit);
+
+    if (unique.length === 6) break;
+  }
+
+  generatedOutfits = unique;
+  generatedCount += unique.length;
+  updateStats();
+
+  $("outfitResults").innerHTML = unique.length
+    ? unique.map(makeOutfitCard).join("")
+    : `<div class="empty">No combinations found. Add more clothing.</div>`;
+}
+
+$("generateBtn").addEventListener("click", generateOutfits);
+
+$("outfitResults").addEventListener("click", event => {
+  const button = event.target.closest("[data-save-outfit]");
+  if (!button) return;
+
+  const outfit = generatedOutfits[Number(button.dataset.saveOutfit)];
+  if (!outfit) return;
+
+  const ids = [outfit.top.id, outfit.bottom.id, outfit.shoes.id];
+  if (outfit.outerwear) ids.push(outfit.outerwear.id);
+
+  const key = ids.slice().sort().join("|");
+
+  if (favorites.some(fav => fav.key === key && fav.occasion === outfit.occasion)) {
+    alert("This outfit is already in your favourites.");
+    return;
+  }
+
+  favorites.unshift({
+    ...outfit,
+    ids,
+    key,
+    favId: String(Date.now() + Math.random())
+  });
+
+  if (persist()) {
+    renderFavorites();
+    updateStats();
+    button.textContent = "♥ Saved";
+  }
+});
+
+function renderFavorites() {
+  $("favoriteGrid").innerHTML = favorites.length
+    ? favorites.map((outfit, index) =>
+        makeOutfitCard({...outfit, favId: outfit.favId || String(index)}, index, true)
+      ).join("")
+    : `<div class="empty">
+        <div class="symbol">♡</div>
+        <p>No favourite outfits yet.</p>
+        <p class="small-text">Generate an outfit and save the looks you love.</p>
+        <button class="btn" data-go="inspire">Explore outfits</button>
+      </div>`;
+
+  updateStats();
+}
+
+$("favoriteGrid").addEventListener("click", event => {
+  const button = event.target.closest("[data-remove-fav]");
+  if (!button) return;
+
+  favorites = favorites.filter((fav, index) =>
+    (fav.favId || String(index)) !== button.dataset.removeFav
+  );
+
+  if (persist()) renderFavorites();
+});
+
+renderCloset();
+renderFavorites();
+</script>
+</body>
+</html>
